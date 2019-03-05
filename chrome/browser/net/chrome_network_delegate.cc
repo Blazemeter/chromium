@@ -270,6 +270,12 @@ void ChromeNetworkDelegate::OnResponseStarted(net::URLRequest* request,
   extensions_delegate_->NotifyResponseStarted(request, net_error);
 }
 
+void ChromeNetworkDelegate::OnNetworkDataReceived(net::URLRequest* request,
+                                                  net::IOBuffer* buf,
+                                                  int64_t bytes_sent) {
+  extensions_delegate_->NotifyNetworkDataReceived(request, buf, bytes_sent);
+}
+
 void ChromeNetworkDelegate::OnNetworkBytesReceived(net::URLRequest* request,
                                                    int64_t bytes_received) {
 #if !defined(OS_ANDROID)

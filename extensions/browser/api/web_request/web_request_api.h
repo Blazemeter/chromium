@@ -286,6 +286,7 @@ class ExtensionWebRequestEventRouter {
     kOnResponseStarted = 1 << 6,
     kOnErrorOccurred = 1 << 7,
     kOnCompleted = 1 << 8,
+    kOnDataReceived = 1 << 9,
   };
 
   // Internal representation of the webRequest.RequestFilter type, used to
@@ -439,6 +440,14 @@ class ExtensionWebRequestEventRouter {
   // and |*request| will be immintently destroyed after this returns.
   void OnRequestWillBeDestroyed(void* browser_context,
                                 const WebRequestInfo* request);
+
+  // Dispatches the onDataReceived event and pass bytes from response body
+  // to the extension
+  void OnDataReceived(void* browser_context,
+                      const InfoMap* extension_info_map,
+                      const WebRequestInfo* request,
+                      net::IOBuffer* buf,
+                      int64_t bytes_received);
 
   // Called when an event listener handles a blocking event and responds.
   void OnEventHandled(void* browser_context,

@@ -78,6 +78,7 @@ struct ExtraInfoSpec {
     ASYNC_BLOCKING = 1 << 3,
     REQUEST_BODY = 1 << 4,
     EXTRA_HEADERS = 1 << 5,
+    RESPONSE_BODY = 1 << 6,
   };
 
   static bool InitFromValue(const base::ListValue& value, int* extra_info_spec);

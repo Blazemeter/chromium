@@ -15,6 +15,7 @@
 #include "base/threading/thread_checker.h"
 #include "net/base/auth.h"
 #include "net/base/completion_once_callback.h"
+#include "net/base/io_buffer.h"
 #include "net/base/net_export.h"
 #include "net/cookies/canonical_cookie.h"
 #include "net/proxy_resolution/proxy_retry_info.h"
@@ -88,6 +89,7 @@ class NET_EXPORT NetworkDelegate {
                             const GURL& new_location);
   void NotifyResponseStarted(URLRequest* request, int net_error);
   void NotifyNetworkBytesReceived(URLRequest* request, int64_t bytes_received);
+  void NotifyNetworkDataReceived(URLRequest* request, IOBuffer* buf, int64_t bytes_received);
   void NotifyNetworkBytesSent(URLRequest* request, int64_t bytes_sent);
   void NotifyCompleted(URLRequest* request, bool started, int net_error);
   void NotifyURLRequestDestroyed(URLRequest* request);
@@ -184,6 +186,10 @@ class NET_EXPORT NetworkDelegate {
                                    const ProxyRetryInfoMap& proxy_retry_info,
                                    HttpRequestHeaders* headers) = 0;
 
+  virtual void OnNetworkDataReceived(URLRequest* request,
+                                    IOBuffer* buf,
+                                    int64_t bytes_received) = 0;
+
   // Called right before the HTTP request(s) are being sent to the network.
   // |headers| is only valid only for the duration of the call.
   virtual void OnStartTransaction(URLRequest* request,
@@ -232,6 +238,8 @@ class NET_EXPORT NetworkDelegate {
   // |bytes_received| does not include TLS overhead or TCP retransmits.
   virtual void OnNetworkBytesReceived(URLRequest* request,
                                       int64_t bytes_received) = 0;
+
+
 
   // Called when bytes are sent over the network, such as when sending request
   // headers or uploading request body bytes. This includes localhost requests.

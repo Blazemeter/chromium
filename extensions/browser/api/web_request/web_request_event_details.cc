@@ -71,6 +71,14 @@ void WebRequestEventDetails::SetRequestBody(WebRequestInfo* request) {
   request_body_ = std::move(request->request_body_data);
 }
 
+void WebRequestEventDetails::SetResponseBody(net::IOBuffer* buf, int64_t bytes_received) {
+   if (bytes_received > 0) {
+       auto ptr = base::Value::CreateWithCopiedBuffer(buf->data(), bytes_received);
+       ptr.swap(response_body_);
+   }
+}
+
+
 void WebRequestEventDetails::SetRequestHeaders(
     const net::HttpRequestHeaders& request_headers) {
   if (!(extra_info_spec_ & ExtraInfoSpec::REQUEST_HEADERS))
@@ -172,7 +180,9 @@ std::unique_ptr<base::DictionaryValue> WebRequestEventDetails::GetFilteredDict(
                                        extra_info_spec));
     result->SetKey(keys::kResponseHeadersKey, std::move(response_headers));
   }
-
+  if ((extra_info_spec & ExtraInfoSpec::RESPONSE_BODY && response_body_) ) {
+    result->SetKey(keys::kResponseDataKey, response_body_->Clone());
+  }
   // Only listeners with a permission for the initiator should recieve it.
   if (extension_info_map && initiator_) {
     int tab_id = -1;

@@ -836,6 +836,12 @@ void URLRequest::NotifyReceivedRedirect(const RedirectInfo& redirect_info,
   }
 }
 
+void URLRequest::NotifyNetworkDataReceived(IOBuffer* buf, int64_t bytes_received) {
+  if (network_delegate_) {
+    network_delegate_->NotifyNetworkDataReceived(this, buf, bytes_received);
+  }
+}
+
 void URLRequest::NotifyResponseStarted(const URLRequestStatus& status) {
   // Change status if there was an error.
   if (status.status() != URLRequestStatus::SUCCESS)

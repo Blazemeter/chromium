@@ -15,6 +15,7 @@
 #include "base/values.h"
 #include "extensions/browser/extension_api_frame_id_map.h"
 #include "extensions/common/extension_id.h"
+#include "net/base/io_buffer.h"
 #include "url/origin.h"
 
 namespace net {
@@ -59,6 +60,10 @@ class WebRequestEventDetails {
   // - requestBody (on demand)
   // Takes ownership of |request_body_data| in |*request|.
   void SetRequestBody(WebRequestInfo* request);
+
+  // Sets the following key:
+  // - responseBody
+  void SetResponseBody(net::IOBuffer* buf, int64_t bytes_received);
 
   // Sets the following key:
   // - requestHeaders (on demand)
@@ -139,6 +144,7 @@ class WebRequestEventDetails {
   // Extra event details: Only included when |extra_info_spec_| matches.
   std::unique_ptr<base::DictionaryValue> request_body_;
   std::unique_ptr<base::ListValue> request_headers_;
+  std::unique_ptr<base::Value> response_body_;
   std::unique_ptr<base::ListValue> response_headers_;
   base::Optional<url::Origin> initiator_;
 

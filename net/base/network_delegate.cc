@@ -118,6 +118,15 @@ void NetworkDelegate::NotifyCompleted(URLRequest* request,
   OnCompleted(request, started, net_error);
 }
 
+void NetworkDelegate::NotifyNetworkDataReceived(URLRequest* request,
+                                                IOBuffer* buf,
+                                                int64_t bytes_received) {
+  TRACE_EVENT0(kNetTracingCategory, "NetworkDelegate::NotifyNetworkDataReceived");
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+  DCHECK(request);
+  OnNetworkDataReceived(request, buf, bytes_received);
+}
+
 void NetworkDelegate::NotifyURLRequestDestroyed(URLRequest* request) {
   TRACE_EVENT0(NetTracingCategory(),
                "NetworkDelegate::NotifyURLRequestDestroyed");

@@ -52,6 +52,10 @@ void NetworkDelegateImpl::OnNetworkBytesReceived(URLRequest* request,
 void NetworkDelegateImpl::OnNetworkBytesSent(URLRequest* request,
                                              int64_t bytes_sent) {}
 
+void NetworkDelegateImpl::OnNetworkDataReceived(URLRequest* request,
+                                                IOBuffer* buf,
+                                                int64_t bytes_sent) {}
+
 void NetworkDelegateImpl::OnCompleted(URLRequest* request,
                                       bool started,
                                       int net_error) {}

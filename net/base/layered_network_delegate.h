@@ -71,6 +71,9 @@ class NET_EXPORT LayeredNetworkDelegate : public NetworkDelegate {
   void OnResponseStarted(URLRequest* request, int net_error) final;
   void OnNetworkBytesReceived(URLRequest* request,
                               int64_t bytes_received) final;
+  void OnNetworkDataReceived(URLRequest* request,
+                             IOBuffer* buf,
+                             int64_t bytes_received) final;
   void OnNetworkBytesSent(URLRequest* request, int64_t bytes_sent) final;
   void OnCompleted(URLRequest* request, bool started, int net_error) final;
   void OnURLRequestDestroyed(URLRequest* request) final;

@@ -114,6 +114,9 @@ class ChromeNetworkDelegate : public net::NetworkDelegateImpl {
       GURL* allowed_unsafe_redirect_url) override;
   void OnBeforeRedirect(net::URLRequest* request,
                         const GURL& new_location) override;
+  void OnNetworkDataReceived(net::URLRequest* request,
+                             net::IOBuffer* buf,
+                             int64_t bytes_sent) override;
   void OnResponseStarted(net::URLRequest* request, int net_error) override;
   void OnNetworkBytesReceived(net::URLRequest* request,
                               int64_t bytes_received) override;

@@ -122,6 +122,9 @@ class ChromeExtensionsNetworkDelegateImpl
   void OnBeforeRedirect(net::URLRequest* request,
                         const GURL& new_location) override;
   void OnResponseStarted(net::URLRequest* request, int net_error) override;
+  void OnNetworkDataReceived(net::URLRequest* request,
+                             net::IOBuffer* buf,
+                             int64_t bytes_received) override;
   void OnCompleted(net::URLRequest* request,
                    bool started,
                    int net_error) override;
@@ -241,6 +244,14 @@ void ChromeExtensionsNetworkDelegateImpl::OnResponseStarted(
   info->AddResponseInfoFromURLRequest(request);
   ExtensionWebRequestEventRouter::GetInstance()->OnResponseStarted(
       profile_, extension_info_map_.get(), info, net_error);
+}
+
+void ChromeExtensionsNetworkDelegateImpl::OnNetworkDataReceived(
+    net::URLRequest* request,
+    net::IOBuffer* buf,
+    int64_t data_len) {
+  ExtensionWebRequestEventRouter::GetInstance()->OnDataReceived(
+      profile_, extension_info_map_.get(), GetWebRequestInfo(request), buf, data_len);
 }
 
 void ChromeExtensionsNetworkDelegateImpl::OnCompleted(net::URLRequest* request,

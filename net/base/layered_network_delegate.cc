@@ -113,6 +113,12 @@ void LayeredNetworkDelegate::OnResponseStarted(URLRequest* request,
   nested_network_delegate_->NotifyResponseStarted(request, net_error);
 }
 
+void LayeredNetworkDelegate::OnNetworkDataReceived(URLRequest* request,
+                                                   IOBuffer* buf,
+                                                   int64_t bytes_received) {
+  nested_network_delegate_->NotifyNetworkDataReceived(request, buf, bytes_received);
+}
+
 void LayeredNetworkDelegate::OnResponseStartedInternal(URLRequest* request,
                                                        int net_error) {}
 

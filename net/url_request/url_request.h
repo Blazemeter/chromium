@@ -828,6 +828,9 @@ class NET_EXPORT URLRequest : public base::SupportsUserData {
   // occurs.
   void NotifyResponseStarted(const URLRequestStatus& status);
 
+  // Called by URLRequestJob to pass buffer with response data to the network delegate
+  void NotifyNetworkDataReceived(IOBuffer* buf, int64_t bytes_received);
+
   // These functions delegate to |delegate_|.  See URLRequest::Delegate for the
   // meaning of these functions.
   void NotifyAuthRequired(AuthChallengeInfo* auth_info);

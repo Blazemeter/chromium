@@ -71,6 +71,8 @@ class NET_EXPORT NetworkDelegateImpl : public NetworkDelegate {
 
   void OnNetworkBytesSent(URLRequest* request, int64_t bytes_sent) override;
 
+  void OnNetworkDataReceived(URLRequest* request, IOBuffer* buf, int64_t bytes_sent) override;
+
   void OnCompleted(URLRequest* request, bool started, int net_error) override;
 
   void OnURLRequestDestroyed(URLRequest* request) override;

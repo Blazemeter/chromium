@@ -139,6 +139,7 @@ int URLRequestJob::Read(IOBuffer* buf, int buf_size) {
   if (result == ERR_IO_PENDING)
     return ERR_IO_PENDING;
 
+  request_->NotifyNetworkDataReceived(buf, result);
   SourceStreamReadComplete(true, result);
   return result;
 }

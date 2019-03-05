@@ -138,6 +138,7 @@ const char* const kWebRequestEvents[] = {
     web_request::OnBeforeRequest::kEventName,
     keys::kOnBeforeSendHeadersEvent,
     keys::kOnCompletedEvent,
+    keys::kOnDataReceivedEvent,
     web_request::OnErrorOccurred::kEventName,
     keys::kOnSendHeadersEvent,
     keys::kOnAuthRequiredEvent,
@@ -180,6 +181,8 @@ const char* GetRequestStageAsString(
       return keys::kOnErrorOccurred;
     case ExtensionWebRequestEventRouter::kOnCompleted:
       return keys::kOnCompleted;
+    case ExtensionWebRequestEventRouter::kOnDataReceived:
+          return keys::kOnDataReceived;
   }
   NOTREACHED();
   return "Not reached";
@@ -353,6 +356,7 @@ events::HistogramValue GetEventHistogramValue(const std::string& event_name) {
       {events::WEB_REQUEST_ON_BEFORE_SEND_HEADERS,
        keys::kOnBeforeSendHeadersEvent},
       {events::WEB_REQUEST_ON_COMPLETED, keys::kOnCompletedEvent},
+      {events::WEB_REQUEST_ON_DATA_RECEIVED, keys::kOnDataReceivedEvent},
       {events::WEB_REQUEST_ON_ERROR_OCCURRED,
        web_request::OnErrorOccurred::kEventName},
       {events::WEB_REQUEST_ON_SEND_HEADERS, keys::kOnSendHeadersEvent},
@@ -1423,6 +1427,32 @@ void ExtensionWebRequestEventRouter::OnRequestWillBeDestroyed(
   signaled_requests_.erase(request->id);
   request_time_tracker_->LogRequestEndTime(request->id, base::TimeTicks::Now());
   pending_requests_for_frame_data_.erase(request);
+}
+
+void ExtensionWebRequestEventRouter::OnDataReceived(
+        void* browser_context,
+        const InfoMap* extension_info_map,
+        const WebRequestInfo* request,
+        net::IOBuffer* buf,
+        int64_t bytes_received) {
+
+  if (bytes_received <= 0)
+    return;
+
+  int extra_info_spec = 0;
+  RawListeners listeners =
+          GetMatchingListeners(browser_context, extension_info_map,
+                               keys::kOnDataReceivedEvent, request, &extra_info_spec);
+  if (listeners.empty())
+    return;
+
+  std::unique_ptr<WebRequestEventDetails> event_details(
+          CreateEventDetails(*request, extra_info_spec));
+  event_details->SetResponseSource(*request);
+  event_details->SetResponseBody(buf, bytes_received);
+
+  DispatchEvent(browser_context, extension_info_map, request, listeners,
+                std::move(event_details));
 }
 
 void ExtensionWebRequestEventRouter::ClearPendingCallbacks(
